@@ -54,12 +54,25 @@ library(dplyr)
 
 我們以個體經濟學為考量之進階課程，學生學習成效以**個經PR**（即學生第一次第一學期修完個經在同班的排名）來衡量。令**可修個體**虛擬變數其值為1若該學生通過修課限制可以修個經，反之為0。請寫下正確的效應結構（ 課堂上的Y即這裡的 **個經PR**，請對應課堂的$Y_{1i}-Y_{0i}$寫法，寫出這題的表示句子。)
 
+```{r 第1.1題}
+
+```
+
+
 ## 1.2 效應結構
 接續上題，課堂上的treatment dummy即為這裡的**可修個體**dummy，請寫下對應課堂效應結構$Y_i=Y_{0i}+(Y_{1i}-Y_{0i})T_i$之對應寫法（以這裡的文字符號表示）。
+```{r 第1.2題}
+
+```
  
 ## 1.3 簡單迴歸模型
 考慮使用如下的簡單迴歸模型來估計效應係數：
 $$個經PR_i=\beta_0+\beta_1 可修個體_i+\epsilon_i$$
+
+```{r 第1.3題}
+"lm <- lm((個經PR)~(可修個體),data=hw1Data)"
+```
+
 
 執行以下程式引入作業資料**hw1Data**:
 ```{r data13}
@@ -76,14 +89,19 @@ hw1Data <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/mas
 
 請進行OLS估計前述的簡單迴歸模型。（注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）
 
-```{r ans13}
-```
-
 ## 1.4 選擇性偏誤
 上題的估計結果很可能不正確，請說明原因故事（非數學證明）。
 
+```{r}
+"立足點"
+```
+
+
 ## 1.5 選擇性偏誤
 這個資料還包含**經原PR**變數，它是學生最後修過的經原成績在該經原班的排名。說明有必要控制**經原PR**的理由（非數學證明）。
+```{r}
+""
+```
 
 
 ## 1.6 複迴歸模型
@@ -91,7 +109,23 @@ hw1Data <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/mas
 $$個經PR_i=\beta_0+\beta_1 可修個體_i+經原PR_i+\epsilon_i.$$
 （注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）
 
-```{r ans16}
+```{r ans16, results='asis'}
+library(broom)
+library(sandwich)
+library(lmtest)
+library(stargazer)
+NoNa <- hw1Data%>% filter(complete.cases(.))
+
+model_1 <- lm(個經PR ~ 可修個體, data=NoNa) 
+model_1_coeftest <- coeftest(model_1, vcov. = vcovHC, type="HC1")
+
+model_2 <- lm(個經PR ~ 可修個體+經原PR, data=NoNa) 
+model_2_coeftest <- coeftest(model_2, vcov. = vcovHC, type="HC1")
+
+stargazer(model_1, model_2, 
+          se=list(model_1_coeftest[,"Std. Error"], model_2_coeftest[,2]),
+          type="html",
+          align=TRUE)
 ```
 
 
@@ -99,18 +133,36 @@ $$個經PR_i=\beta_0+\beta_1 可修個體_i+經原PR_i+\epsilon_i.$$
 請計算**可修個體**為1與0兩群人的**經原PR平均**及**個經PR平均**。（hint: 可利用dplyr套件下的`group_by()`,`summarise()`，及`mean( ,na.rm=T)`, na.rm=T表示計算時排除NA值） 
 
 ```{r ans17}
+##以下是可以修個體學生的經原平均跟個經平均 
+micro <- hw1Data[ hw1Data$可修個體 == 1, ]       #把可以修個體的挑出來
+peconomicsmean1 <- mean(micro$經原PR, na.rm=T)   #經原平均 with 1
+micromean1 <- mean(micro$個經PR, na.rm=T)        #個經平均 with 1
+
+##以下是不可以修個體學生的經原平均跟個經平均
+nomicro <- hw1Data[ hw1Data$可修個體 == 0, ]     #把不可以修個體的挑出來
+peconomicsmean0 <- mean(nomicro$經原PR, na.rm=T) #經原平均 with 0
+micromean0 <- mean(nomicro$個經PR, na.rm=T)      #個經平均 with 0
+
+meancompare0 <- c(peconomicsmean0, micromean0)
+meancompare1 <- c(peconomicsmean1, micromean1)
+meancompare <- cbind(meancompare0, meancompare1)
+colnames(meancompare) <- c("不可修個體","可修個體")
+rownames(meancompare) <- c("個體平均","經原平均")
+
+'answer1.7' <- t(meancompare) #答案
+answer1.7
 ```
 
 
 ## 1.8 偏誤方向
 
 請填入以下空格完成完整偏誤論述：  
-有控制**經原PR**時，擋修會使得**個經PR** (1)____(上升/下降) (2)____百分點，其值比未控制**經原PR**時還 (3)____(高/低)；這表示忽略**經原PR**會對效應係數估計產生 (4)____(正向偏誤(upward bias)/負向偏誤(downward bias))。之所以會有上述的偏誤方向來自於兩個因素：
+有控制**經原PR**時，擋修會使得**個經PR** (1)下降(上升/下降) (2)1.1百分點，其值比未控制**經原PR**時還 (3)低(高/低)；這表示忽略**經原PR**會對效應係數估計產生 (4)upward bias(正向偏誤(upward bias)/負向偏誤(downward bias))。之所以會有上述的偏誤方向來自於兩個因素：
 
-  1. **經原PR**與**個經PR**有(5)____(正向/反向)關連
-  2. **可修個體**=1的族群，其**經原PR**平均較(6)____(高/低)
+  1. **經原PR**與**個經PR**有(5)正向(正向/反向)關連
+  2. **可修個體**=1的族群，其**經原PR**平均較(6)高(高/低)
   
-故若不控制**經原PR**，因**可修個體**=1與=0兩群人也會分別帶有 **經原PR**  (7)____(高與低/低與高)特質，所以**可修個體**=1的人其**個經PR**高，有部份是因其**經原PR**也較(8)____(高/低)所至。
+故若不控制**經原PR**，因**可修個體**=1與=0兩群人也會分別帶有 **經原PR**  (7)高與低(高與低/低與高)特質，所以**可修個體**=1的人其**個經PR**高，有部份是因其**經原PR**也較(8)高(高/低)所至。
 
 ## 1.9 (Optional, 可不寫)
 
