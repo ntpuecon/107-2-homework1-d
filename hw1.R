@@ -1,0 +1,171 @@
+---
+  title: "作業1"
+output: 
+  html_document: 
+  toc: true
+toc_depth: 1
+number_sections: false
+toc_float:
+  collapsed: true
+smooth_scroll: false
+params:
+  name: ["阿花","阿明"]
+id: [710761001,710661002]
+group: "team1"
+url: ""
+---
+  請依狀況更改上面的name,id及group（分別代表組員姓名，學號及組號），但請勿更改下面三行的設定。  
+
+***
+  
+  姓名：`r params$name`  
+學號：`r params$id`  
+組號：`r params$group`  
+網頁：`r params$url` 
+
+***
+  
+  作業除了讓同學檢視課堂所學程式外，有些題目只會給你未教過的函數建議（純為建議，你也可以不使用），你必需使用Help或網路查尋去了解函數的正確使用；搜詢正確程式函數使用的能力，也是程式設計的基本功。
+
+如果是程式答案，在r chunk區塊裡面作答, 如：
+```{r}
+#你的程式答案
+```
+
+如果是文字答案，請直接在該題空白處回答。
+
+```{r setup, include=FALSE}
+# 此chunk為環境設定，無需更動
+knitr::opts_chunk$set(echo = TRUE,message=F)
+library(dplyr)
+```
+
+# 1 擋修的效果
+
+本校經濟系的**個體經濟學**與**總體經濟學**有擋修限制：
+
+* 可修習個經條件：需經原上學期及格，微積分上學期有修習且不為0分。
+
+* 可修習總經條件：需經原上學期**不死當**（>=40分）且下學期及格。
+
+擋修制度的用意在於讓學生於先修課程達一定基礎後，才有能力學好後面的進階課程。
+
+## 1.1 效應評估
+
+我們以個體經濟學為考量之進階課程，學生學習成效以**個經PR**（即學生第一次第一學期修完個經在同班的排名）來衡量。令**可修個體**虛擬變數其值為1若該學生通過修課限制可以修個經，反之為0。請寫下正確的效應結構（ 課堂上的Y即這裡的 **個經PR**，請對應課堂的$Y_{1i}-Y_{0i}$寫法，寫出這題的表示句子。)
+
+
+## 1.2 效應結構
+接續上題，課堂上的treatment dummy即為這裡的**可修個體**dummy，請寫下對應課堂效應結構$Y_i=Y_{0i}+(Y_{1i}-Y_{0i})T_i$之對應寫法（以這裡的文字符號表示）。
+
+## 1.3 簡單迴歸模型
+考慮使用如下的簡單迴歸模型來估計效應係數：
+$$個經PR_i=\beta_0+\beta_1 可修個體_i+\epsilon_i$$
+  執行以下程式引入作業資料**hw1Data**:
+  ```{r data13}
+install.packages('readr')
+library(readr)
+hw1Data <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/master/econometrics107-2-hw1.csv")
+```
+其中變數定義如下：
+
+* **個經學年期**：個經PR來自的學年-學期，100-2即來自100年第2學期。
+
+* **個經PR**：學生**第一次**修習個經於該班上的個經成績排名，PR為勝過的人數比例。
+
+* **可修個體**：「學生在大一結束後有達到可修個經門檻」其值為1的dummy variable。
+
+請進行OLS估計前述的簡單迴歸模型。（注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）
+
+```{r ans13}
+install.packages("sandwich")
+install.packages("lmtest")
+library(sandwich)
+library(lmtest)
+test<-lm(個經PR ~ 可修個體,data= hw1Data)
+summary(test)
+coeftest(test,vcov. =vcovHC,type="HC1")
+```
+
+## 1.4 選擇性偏誤
+上題的估計結果很可能不正確，請說明原因故事（非數學證明）。
+
+因為經原被當的學生可能在學業上的天賦比經原沒被當的學生來得差，所以即使有重修，也有可能仍比不上
+當初經原沒被當的學生，所以會低估重修的效果
+
+## 1.5 選擇性偏誤
+這個資料還包含**經原PR**變數，它是學生最後修過的經原成績在該經原班的排名。說明有必要控制**經原PR**的理由（非數學證明）。
+
+控制經原PR的理由是因為如果有相同的經原PR，那麼應該就有差不多的天賦，接著再比較個經PR，就不會有立足點的問題，
+就可以得知較準確重修對成績的影響
+## 1.6 複迴歸模型
+估算以下的複迴歸模型：
+$$個經PR_i=\beta_0+\beta_1 可修個體_i+經原PR_i+\epsilon_i.$$
+  （注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）
+```{r ans16}
+```
+## 1.7 變數關連
+請計算**可修個體**為1與0兩群人的**經原PR平均**及**個經PR平均**。（hint: 可利用dplyr套件下的`group_by()`,`summarise()`，及`mean( ,na.rm=T)`, na.rm=T表示計算時排除NA值） 
+```{r ans17}
+install.packages("dplyr")
+library(dplyr)
+install.packages("tidyverse")
+library(tidyverse)
+df<-hw1Data %>% group_by(可修個體) %>% summarise(經原PR平均=mean(經原PR,na.rm=T),個經PR平均=mean(個經PR,na.rm=T))
+%>% as.data.frame()
+test2 <- lm(個經PR ~ 可修個體+經原PR,data= hw1Data)
+coeftest(test,vcov. =vcovHC,type="HC1")
+coeftest(test2,vcov. =vcovHC,type="HC1")
+```
+## 1.8 偏誤方向
+請填入以下空格完成完整偏誤論述：  
+有控制**經原PR**時，擋修會使得**個經PR** (1)__下降__(上升/下降) (2)_6.8__百分點，其值比未控制**經原PR**時還 (3)____(高/低)；這表示忽略**經原PR**會對效應係數估計產生 (4)____(正向偏誤(upward bias)/負向偏誤(downward bias))。之所以會有上述的偏誤方向來自於兩個因素：
+
+1. **經原PR**與**個經PR**有(5)____(正向/反向)關連
+2. **可修個體**=1的族群，其**經原PR**平均較(6)____(高/低)
+
+故若不控制**經原PR**，因**可修個體**=1與=0兩群人也會分別帶有 **經原PR**  (7)__高與低__(高與低/低與高)特質，所以**可修個體**=1的人其**個經PR**高，有部份是因其**經原PR**也較(8)__高__(高/低)所至。
+
+## 1.9 (Optional, 可不寫)
+
+從前面的論述你發現什麼？背後的效應反映出什麼課程結構或學生學習問題？你會怎麼延伸研究下去。
+
+# 2 理論
+
+## 2.1
+
+考慮如下的迴歸模型：
+
+$$y_i=\beta_0+\beta_1x_i+\epsilon_i,$$
+  若使用最小平方法估計，則
+$$\hat{\beta}_1=\frac{\sum_{i=1}^N (x_i-\bar{x})(y_i-\bar{y})}{\sum_{i=1}^N (x_i-\bar{x})^2}$$
+  
+  其中$x_i$為0或1的虛擬變數，且令$n_0$與$n_1$分別為樣本中$x_i=0$與$x_i=1$的個數。
+
+請證明：
+$$\hat{\beta}_1=\bar{y}_1-\bar{y}_0,$$
+  其中$\bar{y}_1=\sum_{i,x_i=1}y_i/n_1$與$\bar{y}_0=\sum_{i,x_i=0}y_i/n_0$分別為$x_i=1$與$x_i=0$兩群樣本的$y_i$平均。
+
+提示：證明過程可以適時的使用以下特質：
+
+* 
+  $$\sum_i w_i=\sum_{i,x_i=1} w_i +\sum_{i,x_i=0} w_i$$
+  
+  * $\bar{x}=n_1/n$, 其中$n=n_0+n_1$。
+
+
+## 2.2
+
+假設$E(\epsilon_i|x_i)=0$，證明上題設定下：
+
+(a) $E(\hat{\beta}_1)=\beta_1$
+  
+  (b) 若條件在已知已知每個觀測值的$x_i$為1或0下$V(\epsilon_i|x_i)=\sigma^2$（即齊質變異），則條件變異數$V(\hat{\beta}_1|X)=\frac{n}{n_1 n_0}\sigma^2$。
+
+(c) 若考慮異質變異$V(\epsilon_i|x_i)=\sigma_i^2$，則條件變異數$V(\hat{\beta}_1|X)=\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}$。
+
+
+## 2.3 三明治表示式
+線性迴歸模型
+$Y=X\beta+\epsilon$
+  的OLS估計式$\hat{\beta}=(X'X)^{-1}(X'Y)$。條件在已知$X$下，令$V(\epsilon|X)=\Sigma$。請證明$V(\hat{\beta}|X)=(X'X)^{-1}\Sigma (X'X)$，具有三明治形式（即可表示成$BMB'$的矩陣相乘形式）。
