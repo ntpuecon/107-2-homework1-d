@@ -191,7 +191,11 @@ rownames(meancompare) <- c("個體平均","經原平均")
 'answer1.7' <- t(meancompare) #答案
 answer1.7
 ```
-
+```{r ans17}
+# another method
+by_pr <- hw1Data %>% group_by(可修個體)
+by_pr %>%summarise(econ_PR=mean(經原PR,na.rm=T), micro_PR=mean(個經PR,na.rm=T))
+```
 
 ## 1.8 偏誤方向
 
