@@ -116,9 +116,7 @@ Ans:
 不正確的估計結果起因於「立足點差異」: 這個模型裡面存在兩種人「第一次可修的人」與「第一次不可修的人」，而兩種人都有一個unobservable value，第一次可修的人是「若他第一次不可修，則其第一次修的個經PR」；對第二次可修的人會是「若他第一次可修，則其第一次修的個經PR」。這裡的立足點差異是:實際上第一次可修的人經濟學原理和微積分的學習能力比較強，因此，儘管我把表面上的成績拉低到和學習能力差的人一樣，還是不改這類型人學習能力強的本質。
 
 因此，我可以把立足點差異在「可修個體與否對個經PR的影響」的問題上，拆解成兩個部分:第一次可/不可修個體所造成的PR值差異＋兩種人知識、學習能力上的優劣所造成的PR差異，而前者是我們真正想關心的，後者是立足點差異下的產物。
-```{r}
-"立足點"
-```
+
 
 
 ## 1.5 選擇性偏誤
@@ -138,26 +136,7 @@ Ans:由(1.4)的回答可見，「可修個體與否對個經PR的影響」可以
 $$個經PR_i=\beta_0+\beta_1 可修個體_i+經原PR_i+\epsilon_i.$$
 （注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）
 
-```{r ans16, results='asis'}
-library(broom)
-library(sandwich)
-library(lmtest)
-library(stargazer)
-NoNa <- hw1Data%>% filter(complete.cases(.))
 
-model_1 <- lm(個經PR ~ 可修個體, data=NoNa) 
-model_1_coeftest <- coeftest(model_1, vcov. = vcovHC, type="HC1")
-
-model_2 <- lm(個經PR ~ 可修個體+經原PR, data=NoNa) 
-model_2_coeftest <- coeftest(model_2, vcov. = vcovHC, type="HC1")
-
-stargazer(model_1, model_2, 
-          se=list(model_1_coeftest[,"Std. Error"], model_2_coeftest[,2]),
-          type="html",
-          align=TRUE)
-```
-
-Q:如果只是要在將經原作為控制變數下抓出\beta_1，需要用到上面code chunk的寫法嗎? (我沒理解錯的話，上面code chunk是在比較簡單回歸和複迴歸模型的差異)
 ```{r ans16}
 lm(個經PR~可修個體+經原PR, data=hw1Data)->mulModel
 
@@ -171,30 +150,10 @@ mulModel_coeftest
 ## 1.7 變數關連
 請計算**可修個體**為1與0兩群人的**經原PR平均**及**個經PR平均**。（hint: 可利用dplyr套件下的`group_by()`,`summarise()`，及`mean( ,na.rm=T)`, na.rm=T表示計算時排除NA值） 
 
+
 ```{r ans17}
-##以下是可以修個體學生的經原平均跟個經平均 
-micro <- hw1Data[ hw1Data$可修個體 == 1, ]       #把可以修個體的挑出來
-peconomicsmean1 <- mean(micro$經原PR, na.rm=T)   #經原平均 with 1
-micromean1 <- mean(micro$個經PR, na.rm=T)        #個經平均 with 1
-
-##以下是不可以修個體學生的經原平均跟個經平均
-nomicro <- hw1Data[ hw1Data$可修個體 == 0, ]     #把不可以修個體的挑出來
-peconomicsmean0 <- mean(nomicro$經原PR, na.rm=T) #經原平均 with 0
-micromean0 <- mean(nomicro$個經PR, na.rm=T)      #個經平均 with 0
-
-meancompare0 <- c(peconomicsmean0, micromean0)
-meancompare1 <- c(peconomicsmean1, micromean1)
-meancompare <- cbind(meancompare0, meancompare1)
-colnames(meancompare) <- c("不可修個體","可修個體")
-rownames(meancompare) <- c("個體平均","經原平均")
-
-'answer1.7' <- t(meancompare) #答案
-answer1.7
-```
-```{r ans17}
-# another method
-by_pr <- hw1Data %>% group_by(可修個體)
-by_pr %>%summarise(econ_PR=mean(經原PR,na.rm=T), micro_PR=mean(個經PR,na.rm=T))
+df<-hw1Data %>% group_by(可修個體) %>% summarise(經原PR平均=mean(經原PR,na.rm=T),個經PR平均=mean(個經PR,na.rm=T))
+%>% as.data.frame()
 ```
 
 ## 1.8 偏誤方向
@@ -210,6 +169,12 @@ by_pr %>%summarise(econ_PR=mean(經原PR,na.rm=T), micro_PR=mean(個經PR,na.rm=
 ## 1.9 (Optional, 可不寫)
 
 從前面的論述你發現什麼？背後的效應反映出什麼課程結構或學生學習問題？你會怎麼延伸研究下去。
+
+
+儘管控制了經原PR後，沒重修的人個經表現仍比有重修的人好，我們認為有可能是即使重修的人在經原第二次修後表現改善了，
+不過那可能只是因為較熟悉的緣故，天分仍比不上沒重修的人，自然個經PR還是比較低，也有可能，後續科目沒有擋修，所以又故態復萌，(未來可以研究
+成績的差距是因為天分還是重修的學生沒有檔修的壓力又不認真了。)
+所以我們認為如果問題可以確認是故態復萌，那麼未來可能可以多設置會擋修的科目可能會改善此狀況。
 
 # 2 理論
 
