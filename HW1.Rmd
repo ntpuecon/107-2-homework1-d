@@ -316,6 +316,7 @@ V(Y_0)
 \end{split}
 \end{equation*}$$
 
+
 $$\begin{equation*}
 \begin{split}
 V(Y_1)
