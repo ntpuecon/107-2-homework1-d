@@ -153,7 +153,7 @@ mulModel_coeftest
 
 
 ```{r ans17}
-df<-hw1Data %>% group_by(可修個體) %>% summarise(經原PR平均=mean(經原PR,na.rm=T),個經PR平均=mean(個經PR,na.rm=T))
+hw1Data %>% group_by(可修個體) %>% summarise(經原PR平均=mean(經原PR,na.rm=T),個經PR平均=mean(個經PR,na.rm=T))
 %>% as.data.frame()
 ```
 
