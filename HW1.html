@@ -288,9 +288,9 @@ div.tocify {
 
 <p>請依狀況更改上面的name,id及group（分別代表組員姓名，學號及組號），但請勿更改下面三行的設定。</p>
 <hr />
-<p>姓名：阿花, 阿明<br />
+<p>姓名：余亞諺, 黃智遠, 陳廷瑋, 顏煜名<br />
 學號：710761001, 710661002<br />
-組號：team1<br />
+組號：team D<br />
 網頁：</p>
 <hr />
 <p>作業除了讓同學檢視課堂所學程式外，有些題目只會給你未教過的函數建議（純為建議，你也可以不使用），你必需使用Help或網路查尋去了解函數的正確使用；搜詢正確程式函數使用的能力，也是程式設計的基本功。</p>
@@ -308,16 +308,17 @@ div.tocify {
 <div class="section level2">
 <h2>1.1 效應評估</h2>
 <p>我們以個體經濟學為考量之進階課程，學生學習成效以<strong>個經PR</strong>（即學生第一次第一學期修完個經在同班的排名）來衡量。令<strong>可修個體</strong>虛擬變數其值為1若該學生通過修課限制可以修個經，反之為0。請寫下正確的效應結構（ 課堂上的Y即這裡的 <strong>個經PR</strong>，請對應課堂的<span class="math inline">\(Y_{1i}-Y_{0i}\)</span>寫法，寫出這題的表示句子。)</p>
+<p>Y:個經PR Y_{1i}:沒被擋修、第一次修個體的PR Y_{0i}:被擋修、第一次修個體的PR Y_{1i}-Y_{0i}表示「沒被擋修個體」為第一次的個體PR值所帶來的效果。</p>
 </div>
 <div class="section level2">
 <h2>1.2 效應結構</h2>
 <p>接續上題，課堂上的treatment dummy即為這裡的<strong>可修個體</strong>dummy，請寫下對應課堂效應結構<span class="math inline">\(Y_i=Y_{0i}+(Y_{1i}-Y_{0i})T_i\)</span>之對應寫法（以這裡的文字符號表示）。</p>
+<p>T_{i}:虛擬變數。T_{1}=1是可修個體下的虛擬變數值、T_{0}=0是不可修個體下的虛擬變數值 Y = Y_{0i}+[Y_{1i}-Y_{0i}]T_{i}</p>
 </div>
 <div class="section level2">
 <h2>1.3 簡單迴歸模型</h2>
 <p>考慮使用如下的簡單迴歸模型來估計效應係數： <span class="math display">\[個經PR_i=\beta_0+\beta_1 可修個體_i+\epsilon_i\]</span></p>
-<pre class="r"><code>&quot;lm &lt;- lm((個經PR)~(可修個體),data=hw1Data)&quot;</code></pre>
-<pre><code>## [1] &quot;lm &lt;- lm((個經PR)~(可修個體),data=hw1Data)&quot;</code></pre>
+<p>“lm &lt;- lm((個經PR)~(可修個體),data=hw1Data)”</p>
 <p>執行以下程式引入作業資料<strong>hw1Data</strong>:</p>
 <pre class="r"><code>library(readr)
 hw1Data &lt;- read_csv(&quot;https://raw.githubusercontent.com/tpemartin/github-data/master/econometrics107-2-hw1.csv&quot;)</code></pre>
@@ -328,274 +329,78 @@ hw1Data &lt;- read_csv(&quot;https://raw.githubusercontent.com/tpemartin/github-
 <li><p><strong>可修個體</strong>：「學生在大一結束後有達到可修個經門檻」其值為1的dummy variable。</p></li>
 </ul>
 <p>請進行OLS估計前述的簡單迴歸模型。（注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）</p>
+<pre class="r"><code>library(sandwich)
+library(lmtest)
+linearMod &lt;- lm(個經PR~可修個體, data=hw1Data)
+coeftest(linearMod, vcov. = vcovHC, type=&quot;HC1&quot;) -&gt;  linearMod_coeftest
+linearMod_coeftest</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##             Estimate Std. Error t value  Pr(&gt;|t|)    
+## (Intercept) 0.285110   0.025739 11.0768 &lt; 2.2e-16 ***
+## 可修個體    0.078732   0.028788  2.7349  0.006407 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="section level2">
 <h2>1.4 選擇性偏誤</h2>
 <p>上題的估計結果很可能不正確，請說明原因故事（非數學證明）。</p>
-<pre class="r"><code>&quot;立足點&quot;</code></pre>
-<pre><code>## [1] &quot;立足點&quot;</code></pre>
+<p>Ans:</p>
+<p>不正確的估計結果起因於「立足點差異」:這個模型裡面存在兩種人:「第一次可修的人」與「第一次不可修的人」。這裡的立足點差異是:實際上第一次可修的人經濟學原理和微積分的學習能力比較強，因此，儘管我把表面上的成績拉低到和學習能力差的人一樣，還是不改第一次可修的人學習能力強的本質。</p>
+<p>因此，我們將「可修個體與否對個經PR的影響」的問題拆解成兩個部分:第一次可/不可修個體所造成的PR值差異＋兩種人知識、學習能力上的不同所造成的PR差異，而前者是我們真正想關心的，後者則是立足點差異下的產物</p>
 </div>
 <div id="-1" class="section level2">
 <h2>1.5 選擇性偏誤</h2>
 <p>這個資料還包含<strong>經原PR</strong>變數，它是學生最後修過的經原成績在該經原班的排名。說明有必要控制<strong>經原PR</strong>的理由（非數學證明）。</p>
-<pre class="r"><code>&quot;&quot;</code></pre>
-<pre><code>## [1] &quot;&quot;</code></pre>
+<p>Ans:</p>
+<p>由(1.4)的回答可見，「可修個體與否對個經PR的影響」可以分成兩個部分，而我們真正想關心的是第一個部分，即:「第一次可/不可修個體所造成的PR值差異」。因此，我們的課題會是: 如何去掉「兩種人知識、學習能力上的不同所造成的PR差異」這項影響? 而最直接的做法就是「找在知識和學習能力上相當的人」。</p>
+<p>因此，當我們控制了經原PR，就表示我們我們樣本中的學生是「知識和學習能力上相當的人」，此時我們真正關心的「可修個體與否對個經PR的影響」的效果就被獨立出來了。</p>
 </div>
 <div class="section level2">
 <h2>1.6 複迴歸模型</h2>
 <p>估算以下的複迴歸模型： <span class="math display">\[個經PR_i=\beta_0+\beta_1 可修個體_i+經原PR_i+\epsilon_i.\]</span> （注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）</p>
-<pre class="r"><code>library(broom)</code></pre>
-<pre><code>## Warning: package 'broom' was built under R version 3.5.3</code></pre>
-<pre class="r"><code>library(sandwich)
+<pre class="r"><code>lm(個經PR~可修個體+經原PR, data=hw1Data)-&gt;mulModel
+library(sandwich)
 library(lmtest)
-library(stargazer)
-NoNa &lt;- hw1Data%&gt;% filter(complete.cases(.))
-
-model_1 &lt;- lm(個經PR ~ 可修個體, data=NoNa) 
-model_1_coeftest &lt;- coeftest(model_1, vcov. = vcovHC, type=&quot;HC1&quot;)
-
-model_2 &lt;- lm(個經PR ~ 可修個體+經原PR, data=NoNa) 
-model_2_coeftest &lt;- coeftest(model_2, vcov. = vcovHC, type=&quot;HC1&quot;)
-
-stargazer(model_1, model_2, 
-          se=list(model_1_coeftest[,&quot;Std. Error&quot;], model_2_coeftest[,2]),
-          type=&quot;html&quot;,
-          align=TRUE)</code></pre>
-<table style="text-align:center">
-<tr>
-<td colspan="3" style="border-bottom: 1px solid black">
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td colspan="2">
-<em>Dependent variable:</em>
-</td>
-</tr>
-<tr>
-<td>
-</td>
-<td colspan="2" style="border-bottom: 1px solid black">
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td colspan="2">
-個經PR
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-(1)
-</td>
-<td>
-(2)
-</td>
-</tr>
-<tr>
-<td colspan="3" style="border-bottom: 1px solid black">
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-可修個體
-</td>
-<td>
-0.077<sup>***</sup>
-</td>
-<td>
-0.066<sup>**</sup>
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-(0.029)
-</td>
-<td>
-(0.029)
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-經原PR
-</td>
-<td>
-</td>
-<td>
-0.102<sup>***</sup>
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-</td>
-<td>
-(0.039)
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-Constant
-</td>
-<td>
-0.285<sup>***</sup>
-</td>
-<td>
-0.250<sup>***</sup>
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-(0.026)
-</td>
-<td>
-(0.029)
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-</td>
-<td>
-</td>
-<td>
-</td>
-</tr>
-<tr>
-<td colspan="3" style="border-bottom: 1px solid black">
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-Observations
-</td>
-<td>
-654
-</td>
-<td>
-654
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-R<sup>2</sup>
-</td>
-<td>
-0.005
-</td>
-<td>
-0.015
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-Adjusted R<sup>2</sup>
-</td>
-<td>
-0.003
-</td>
-<td>
-0.012
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-Residual Std. Error
-</td>
-<td>
-0.309 (df = 652)
-</td>
-<td>
-0.308 (df = 651)
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-F Statistic
-</td>
-<td>
-3.260<sup>*</sup> (df = 1; 652)
-</td>
-<td>
-4.818<sup>***</sup> (df = 2; 651)
-</td>
-</tr>
-<tr>
-<td colspan="3" style="border-bottom: 1px solid black">
-</td>
-</tr>
-<tr>
-<td style="text-align:left">
-<em>Note:</em>
-</td>
-<td colspan="2" style="text-align:right">
-<sup><em></sup>p&lt;0.1; <sup><strong></sup>p&lt;0.05; <sup></strong></em></sup>p&lt;0.01
-</td>
-</tr>
-</table>
+coeftest(mulModel, vcov. = vcovHC, type=&quot;HC1&quot;) -&gt; mulModel_coeftest
+mulModel_coeftest</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 0.252055   0.028751  8.7670  &lt; 2e-16 ***
+## 可修個體    0.068024   0.028978  2.3475  0.01920 *  
+## 經原PR      0.096260   0.038603  2.4936  0.01289 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="section level2">
 <h2>1.7 變數關連</h2>
 <p>請計算<strong>可修個體</strong>為1與0兩群人的<strong>經原PR平均</strong>及<strong>個經PR平均</strong>。（hint: 可利用dplyr套件下的<code>group_by()</code>,<code>summarise()</code>，及<code>mean( ,na.rm=T)</code>, na.rm=T表示計算時排除NA值）</p>
-<pre class="r"><code>##以下是可以修個體學生的經原平均跟個經平均 
-micro &lt;- hw1Data[ hw1Data$可修個體 == 1, ]       #把可以修個體的挑出來
-peconomicsmean1 &lt;- mean(micro$經原PR, na.rm=T)   #經原平均 with 1
-micromean1 &lt;- mean(micro$個經PR, na.rm=T)        #個經平均 with 1
-
-##以下是不可以修個體學生的經原平均跟個經平均
-nomicro &lt;- hw1Data[ hw1Data$可修個體 == 0, ]     #把不可以修個體的挑出來
-peconomicsmean0 &lt;- mean(nomicro$經原PR, na.rm=T) #經原平均 with 0
-micromean0 &lt;- mean(nomicro$個經PR, na.rm=T)      #個經平均 with 0
-
-meancompare0 &lt;- c(peconomicsmean0, micromean0)
-meancompare1 &lt;- c(peconomicsmean1, micromean1)
-meancompare &lt;- cbind(meancompare0, meancompare1)
-colnames(meancompare) &lt;- c(&quot;不可修個體&quot;,&quot;可修個體&quot;)
-rownames(meancompare) &lt;- c(&quot;個體平均&quot;,&quot;經原平均&quot;)
-
-'answer1.7' &lt;- t(meancompare) #答案
-answer1.7</code></pre>
-<pre><code>##             個體平均  經原平均
-## 不可修個體 0.3204560 0.2851097
-## 可修個體   0.3829347 0.3638421</code></pre>
+<pre class="r"><code>hw1Data %&gt;% group_by(可修個體) %&gt;% summarise(經原PR平均=mean(經原PR,na.rm=T),個經PR平均=mean(個經PR,na.rm=T))%&gt;% as.data.frame()</code></pre>
+<pre><code>##   可修個體 經原PR平均 個經PR平均
+## 1        0  0.3204560  0.2851097
+## 2        1  0.3829347  0.3638421</code></pre>
 </div>
 <div class="section level2">
 <h2>1.8 偏誤方向</h2>
 <p>請填入以下空格完成完整偏誤論述：<br />
-有控制<strong>經原PR</strong>時，擋修會使得<strong>個經PR</strong> (1)“下降”(上升/下降) (2)“1.1”百分點，其值比未控制<strong>經原PR</strong>時還 (3)“低”(高/低)；這表示忽略<strong>經原PR</strong>會對效應係數估計產生 (4)“upward bias”(正向偏誤(upward bias)/負向偏誤(downward bias))。之所以會有上述的偏誤方向來自於兩個因素：</p>
-<ol style="list-style-type: decimal">
-<li><strong>經原PR</strong>與<strong>個經PR</strong>有(5)“正向”(正向/反向)關連</li>
-<li><strong>可修個體</strong>=1的族群，其<strong>經原PR</strong>平均較(6)“高”(高/低)</li>
-</ol>
-<p>故若不控制<strong>經原PR</strong>，因<strong>可修個體</strong>=1與=0兩群人也會分別帶有 <strong>經原PR</strong> (7)“高與低”(高與低/低與高)特質，所以<strong>可修個體</strong>=1的人其<strong>個經PR</strong>高，有部份是因其<strong>經原PR</strong>也較(8)“高”(高/低)所至。</p>
+有控制<strong>經原PR</strong>時，擋修會使得<strong>個經PR</strong> (1)“<strong>下降</strong>”(上升/下降) (2)“<strong>6.8</strong>”百分點，其值比未控制<strong>經原PR</strong>時還 (3)“<strong>低</strong>”(高/低)；這表示忽略<strong>經原PR</strong>會對效應係數估計產生 (4)“<strong>upward bias</strong>”(正向偏誤(upward bias)/負向偏誤(downward bias))。 之所以會有上述的偏誤方向來自於兩個因素： 1. <strong>經原PR</strong>與<strong>個經PR</strong>有(5)“<strong>正向</strong>”(正向/反向)關連 2. <strong>可修個體</strong>=1的族群，其<strong>經原PR</strong>平均較(6)“<strong>高</strong>”(高/低)</p>
+<p>故若不控制<strong>經原PR</strong>，因<strong>可修個體</strong>=1與=0兩群人也會分別帶有 <strong>經原PR</strong> (7)“<strong>高與低</strong>”(高與低/低與高)特質，所以<strong>可修個體</strong>=1的人其<strong>個經PR</strong>高，有部份是因其<strong>經原PR</strong>也較(8)“<strong>高</strong>”(高/低)所至。</p>
 </div>
 <div id="optional-" class="section level2">
 <h2>1.9 (Optional, 可不寫)</h2>
-<p>從前面的論述你發現什麼？背後的效應反映出什麼課程結構或學生學習問題？你會怎麼延伸研究下去。</p>
+<p>從前面的論述你發現什麼？背後的效應反映出什麼課程結構或學生學習問題？你會怎麼延伸研究下去。 Ans: 透過擋修制度我們只能做到「表面上」讓學生有能力修後續的進階課程。 意即: 擋修制度關心的並不是學生的學習態度、學習表現是否真的改善了，而是學生能不能達到表面上的分數要求。</p>
+<p>因此，我們可以發現在擋修制度下被要求重修經原的學生，即使他們修了兩次經原，但是不管在平均經原PR或是平均個經PR上的表現，都比不需要重修的學生來的差。</p>
+<p>那甚麼叫做「非表面上」的改善呢?　那就是重修經原的學生在經原平均PR與個經平均PR上的表現，與沒被擋修的同學表現一樣好(甚至更好，畢竟他們修了兩次經原)。</p>
+<p>據此，我認為當教育制度衡量學生表現的方式，只能透過「改善學生表面上的表現」的時候，未免有點本末倒置，這就像是教育規劃者在眼前架起了一道牆壁，而教育規畫者只關心學生的頭是不是都超過了牆壁，一旦超過就覺得功德圓滿，但卻鮮少關心牆後的學生有的斷手、有的斷腳。</p>
+<p>當然，若我們把本例子中「學生學習表現不好」的起因都怪在「擋修制度無法實質改善學生學習表現」上，也未免太過偏激。我們始終能找到把多數時間花在學業以外的事情上的學生(e.g.社團、打工)，而這些學生表現不好的原因也確實是因為沒放心思在課業上，但當這些人被擋修制度篩選出來的時候，教育制度卻是告訴這些人:「你們就多花點時間、精力在課業上阿!」，這樣不是很可惜?</p>
+<p>我們認為此議題的後續研究可分幾個面向:</p>
+<ol style="list-style-type: decimal">
+<li><p>比較「第一次經原通過，第二次個經被當」與「第一次經原被當、第二次個經也被當」的人數比例(要抓出經原通過時PR相近的兩群人)。透過這個比較，我們得以知道擋修制度究竟是讓經原被當的學生改過自新、奮發圖強?　還是用同樣造成他經原被當的學習模式去面對個經?</p></li>
+<li><p>身為教育者，要怎麼實際的改善這些學生的學習表現? 或是協助這些學生在成績勉強過得去的情況下，讓他們去發展自己擅長的技能?</p></li>
+</ol>
 </div>
 </div>
 <div class="section level1">
@@ -611,19 +416,147 @@ answer1.7</code></pre>
 <li><p><span class="math display">\[\sum_i w_i=\sum_{i,x_i=1} w_i +\sum_{i,x_i=0} w_i\]</span></p></li>
 <li><p><span class="math inline">\(\bar{x}=n_1/n\)</span>, 其中<span class="math inline">\(n=n_0+n_1\)</span>。</p></li>
 </ul>
+<p>答案:</p>
+<p><span class="math display">\[\sum_{i,x_i=1}^n x_i=n_1\]</span> <span class="math inline">\(n_0=n-n_1\)</span></p>
+<p><span class="math inline">\(\bar{x}=\frac{\sum_{i,x_1=1}^n x_i}{n}=\frac{n_1}{n_1+n_0}\)</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\displaystyle\sum_{i,x_i=1}^n (x_i-\bar{x})^2
+&amp;=\displaystyle\sum_{i,x_i=1}^n ((x_i)^2-2x_i\bar{x}+\bar{x}^2
+=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -2\bar{x}\displaystyle\sum_{i,x_i=1}^n x_i +n\bar{x}^2\\
+&amp;=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -2n\bar{x}^2+n\bar{x}^2
+=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -n\bar{x}^2\\
+&amp;=n_1-(n_0+n_1)(\frac{n_1}{n_0+n_1})^2
+=n_1-\frac{n_1^2}{n_0+n_1}\\
+&amp;=\frac{n_1^2-n_0 n_1}{n_0+n_1}-\frac{n_1^2}{n_0+n_1}\\
+&amp;=\frac{n_0 n_1}{n_0+n_1}
+\end{split}
+\end{equation*}\]</span></p>
+<div id="section-1" class="section level6">
+<h6>———-</h6>
+<p><span class="math display">\[
+\begin{equation*}
+\begin{split}
+\hat{\beta_1}
+&amp;=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}(x_i-\bar{x})}
+=\frac{\displaystyle\sum_{i=1}^n x_iy_i-n\bar{y}}{\frac{n_0 n_1}{n_0 + n_1}} 
+=\frac{n_1(\bar{y_1}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1})}{\frac{n_0 n_1}{n_0+n_1}}\\   
+&amp;=\bar{y_1}\frac{n_0+n_1}{n_0}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1}\frac{n_0+n_1}{n_0}\\
+&amp;=\bar{y_1}+\bar{y_1}\frac{n_1}{n_0}-\bar{y_1}\frac{n_1}{n_0}-\bar{y_0}\\
+&amp;=\bar{y_1}-\bar{y_0}
+\end{split}
+\end{equation*}\]</span></p>
 </div>
-<div id="section-1" class="section level2">
+</div>
+<div id="section-2" class="section level2">
 <h2>2.2</h2>
 <p>假設<span class="math inline">\(E(\epsilon_i|x_i)=0\)</span>，證明上題設定下：</p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+\hat{\beta_1}
+&amp;=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})(y_i-{\bar{y}})}{\displaystyle\sum_{i=1}(x_i-\bar{x})^2}
+=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}(x_i-\bar{x})}\\
+&amp;=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})(\beta_0+\beta_1x_i+u_i)}{\displaystyle\sum_{i=1}(x_i-\bar{x})}\\
+&amp;=\frac{\displaystyle\beta_0}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\displaystyle\sum_{i=1}^nx_i-\bar{x}
++\frac{\displaystyle\beta_1}{\displaystyle\sum_{i=1}(x_i-\bar{x})^2}\displaystyle\sum_{i=1}(x_i-\bar{x})
++\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
+&amp;=0+\frac{\displaystyle\beta_1}{\sum_{i=1}(x_i-\bar{x})^2}\displaystyle\sum_{i=1}(x_i-\bar{x})^2
++\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
+&amp;=\beta_1+\frac{\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
+\end{split}
+\end{equation*}\]</span></p>
 <ol style="list-style-type: lower-alpha">
-<li><p><span class="math inline">\(E(\hat{\beta}_1)=\beta_1\)</span></p></li>
-<li><p>若條件在已知已知每個觀測值的<span class="math inline">\(x_i\)</span>為1或0下<span class="math inline">\(V(\epsilon_i|x_i)=\sigma^2\)</span>（即齊質變異），則條件變異數<span class="math inline">\(V(\hat{\beta}_1|X)=\frac{n}{n_1 n_0}\sigma^2\)</span>。</p></li>
-<li><p>若考慮異質變異<span class="math inline">\(V(\epsilon_i|x_i)=\sigma_i^2\)</span>，則條件變異數<span class="math inline">\(V(\hat{\beta}_1|X)=\frac{\sigma_1^2}{n_1}+\frac{\sigma_2^2}{n_2}\)</span>。</p></li>
+<li><span class="math inline">\(E(\hat{\beta}_1)=\beta_1\)</span></li>
 </ol>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+E(\hat{\beta}_1)
+=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})E(u_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
+=\beta_1
+\end{split}
+\end{equation*}\]</span></p>
+<ol start="2" style="list-style-type: lower-alpha">
+<li>若條件在已知已知每個觀測值的<span class="math inline">\(x_i\)</span>為1或0下<span class="math inline">\(V(\epsilon_i|x_i)=\sigma^2\)</span>（即齊質變異），則條件變異數<span class="math inline">\(V(\hat{\beta}_1|X)=\frac{n}{n_1 n_0}\sigma^2\)</span>。</li>
+</ol>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+Var(\hat{\beta}_1|X)
+&amp;=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})Var(u_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
+&amp;=\frac{\displaystyle\sigma^2}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
+=\frac{\displaystyle\sigma^2}{\frac{n_0 n_1}{n_0+n_1}}\\
+&amp;=\frac{n}{n_0 n_1}\sigma^2
+\end{split}
+\end{equation*}\]</span></p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li>若考慮異質變異<span class="math inline">\(V(\epsilon_i|x_i=0)=\sigma_0^2\)</span>、<span class="math inline">\(V(\epsilon_i|x_i=1)=\sigma_1^2\)</span>，則條件變異數<span class="math inline">\(V(\hat{\beta}_1|X)=\frac{\sigma_0^2}{n_0}+\frac{\sigma_1^2}{n_1}\)</span>。</li>
+</ol>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+V(\epsilon_i|x_i=0)
+&amp;=\sigma_0^2\\
+&amp;=E(\epsilon_i^2|x_i)-E(\epsilon_i|x_i)^2\\
+&amp;=E(\epsilon_i^2|x_i)-0^2\\
+&amp;=E(\epsilon_i^2|x_i)\\
+&amp;=\sigma_0^2
+\end{split}
+\end{equation*}\]</span></p>
+<p>所以 <span class="math display">\[\begin{equation*}
+\begin{split}
+E(\epsilon_i^2|x_i=0)=\sigma_0^2
+\end{split}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+E(\epsilon_i^2|x_i=1)=\sigma_1^2
+\end{split}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+V(\hat{\beta_1}|x_i=0)
+&amp;=V(\bar{y_1}-\bar{y_0}|X)\\
+&amp;=V(\bar{y_0}|X)+V(\bar{y_1}|X)\\
+&amp;=\frac{V(y_1)}{n_o}+\frac{V(y_1)}{n_o}
+\end{split}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+V(Y_0)
+&amp;=E(Y_0^2|X)-E(Y_0|X)^2\\
+&amp;=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\
+&amp;=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\
+&amp;=\beta_0^2+\sigma_0^2-\beta_0^2\\
+&amp;=\sigma_0^2
+\end{split}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+V(Y_1)
+&amp;=E(Y_１^2|X)-E(Y_1|X)^2\\
+&amp;=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\
+&amp;=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\
+&amp;=\beta_0^2+\sigma_１^2-\beta_0^2\\
+&amp;=\sigma_1^2
+\end{split}
+\end{equation*}\]</span></p>
+<p><span class="math display">\[\begin{equation*}
+\begin{split}
+V(\hat{\beta_1|X})=\frac{\sigma_0^2}{n_0}+\frac{\sigma_1^2}{n_1}
+\end{split}
+\end{equation*}\]</span></p>
 </div>
 <div class="section level2">
 <h2>2.3 三明治表示式</h2>
-<p>線性迴歸模型 <span class="math inline">\(Y=X\beta+\epsilon\)</span> 的OLS估計式<span class="math inline">\(\hat{\beta}=(X'X)^{-1}(X'Y)\)</span>。條件在已知<span class="math inline">\(X\)</span>下，令<span class="math inline">\(V(\epsilon|X)=\Sigma\)</span>。請證明<span class="math inline">\(V(\hat{\beta}|X)=(X'X)^{-1}\Sigma (X'X)\)</span>，具有三明治形式（即可表示成<span class="math inline">\(BMB'\)</span>的矩陣相乘形式）。</p>
+<p>線性迴歸模型 <span class="math inline">\(Y=X\beta+\epsilon\)</span> 的OLS估計式<span class="math inline">\(\hat{\beta}=(X'X)^{-1}(X'Y)\)</span>。條件在已知<span class="math inline">\(X\)</span>下，令<span class="math inline">\(V(\epsilon|X)=\Sigma\)</span>。請證明<span class="math inline">\(V(\hat{\beta}|X)=(X'X)^{-1}X'\Sigma X(X'X)^{-1}\)</span>，具有三明治形式（即可表示成<span class="math inline">\(BMB'\)</span>的矩陣相乘形式）。</p>
+<p><span class="math display">\[\begin{aligned}
+\begin{split}
+Var(\hat{\beta})
+&amp;=E\{[\hat{\beta}-E(\hat{\beta})][\hat{\beta}-E{\hat{\beta}}]'\}\\
+&amp;=E\{(X'X)^{-1}X'uu'X(X'X)^{-1}\}\\
+&amp;=(X'X)^{-1}X'E(uu')X(X'X)^{-1}\\
+&amp;=(X'X)^{-1}X'\sigma^2 I_nX(X'X)^{-1}\\
+&amp;=BMB'
+\end{split}
+\end{aligned}\]</span></p>
 </div>
 </div>
 
