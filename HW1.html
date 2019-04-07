@@ -72,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -105,8 +103,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -265,6 +261,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -291,7 +297,7 @@ div.tocify {
 <p>姓名：余亞諺, 黃智遠, 陳廷瑋, 顏煜名<br />
 學號：710761114, 710661111, 710761119, 410573099<br />
 組號：team D<br />
-網頁：</p>
+網頁：<a href="http://rpubs.com/justin22513/hw1" class="uri">http://rpubs.com/justin22513/hw1</a></p>
 <hr />
 <p>作業除了讓同學檢視課堂所學程式外，有些題目只會給你未教過的函數建議（純為建議，你也可以不使用），你必需使用Help或網路查尋去了解函數的正確使用；搜詢正確程式函數使用的能力，也是程式設計的基本功。</p>
 <p>如果是程式答案，在r chunk區塊裡面作答, 如：</p>
@@ -342,8 +348,9 @@ div.tocify {
 <p>考慮使用如下的簡單迴歸模型來估計效應係數： <span class="math display">\[個經PR_i=\beta_0+\beta_1 可修個體_i+\epsilon_i\]</span></p>
 <p>“lm &lt;- lm((個經PR)~(可修個體),data=hw1Data)”</p>
 <p>執行以下程式引入作業資料<strong>hw1Data</strong>:</p>
-<pre class="r"><code>library(readr)
-hw1Data &lt;- read_csv(&quot;https://raw.githubusercontent.com/tpemartin/github-data/master/econometrics107-2-hw1.csv&quot;)</code></pre>
+<pre class="r"><code>library(readr)</code></pre>
+<pre><code>## Warning: package 'readr' was built under R version 3.5.3</code></pre>
+<pre class="r"><code>hw1Data &lt;- read_csv(&quot;https://raw.githubusercontent.com/tpemartin/github-data/master/econometrics107-2-hw1.csv&quot;)</code></pre>
 <p>其中變數定義如下：</p>
 <ul>
 <li><p><strong>個經學年期</strong>：個經PR來自的學年-學期，100-2即來自100年第2學期。</p></li>
@@ -352,8 +359,10 @@ hw1Data &lt;- read_csv(&quot;https://raw.githubusercontent.com/tpemartin/github-
 </ul>
 <p>請進行OLS估計前述的簡單迴歸模型。（注意估計式標準誤必需使用穩健標準誤robust standard error，即使用三明治及HC調整後的標準誤。）</p>
 <pre class="r"><code>library(sandwich)
-library(lmtest)
-linearMod &lt;- lm(個經PR~可修個體, data=hw1Data)
+library(lmtest)</code></pre>
+<pre><code>## Warning: package 'lmtest' was built under R version 3.5.3</code></pre>
+<pre><code>## Warning: package 'zoo' was built under R version 3.5.3</code></pre>
+<pre class="r"><code>linearMod &lt;- lm(個經PR~可修個體, data=hw1Data)
 coeftest(linearMod, vcov. = vcovHC, type=&quot;HC1&quot;) -&gt;  linearMod_coeftest
 linearMod_coeftest</code></pre>
 <pre><code>## 

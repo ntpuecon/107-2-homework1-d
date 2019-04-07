@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/484235/85d8d9e07849453297471e87683f072b
+bundleId: https://api.rpubs.com/api/v1/document/484235/85d8d9e07849453297471e87683f072b
+url: http://rpubs.com/justin22513/484235
+when: 1554642987.08853
