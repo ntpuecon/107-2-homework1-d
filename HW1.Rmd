@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ---
 title: "作業1"
 output: 
@@ -11,7 +11,7 @@ output:
       smooth_scroll: false
 params:
   name: ["余亞諺","黃智遠","陳廷瑋","顏煜名"]
-  id: [710761001,710661002]
+  id: [710761114,710661111]
   group: "team D"
   url: ""
 ---
@@ -56,18 +56,20 @@ library(dplyr)
 我們以個體經濟學為考量之進階課程，學生學習成效以**個經PR**（即學生第一次第一學期修完個經在同班的排名）來衡量。令**可修個體**虛擬變數其值為1若該學生通過修課限制可以修個經，反之為0。請寫下正確的效應結構（ 課堂上的Y即這裡的 **個經PR**，請對應課堂的$Y_{1i}-Y_{0i}$寫法，寫出這題的表示句子。)
 
 
-Y:個經PR
-Y_{1i}:沒被擋修、第一次修個體的PR
-Y_{0i}:被擋修、第一次修個體的PR
-Y_{1i}-Y_{0i}表示「沒被擋修個體」為第一次的個體PR值所帶來的效果。
+####Y:個經PR
+####$Y_{1i}$ : 沒被擋修、第一次修個體的PR
+####$Y_{0i}$ : 被擋修、第一次修個體的PR
+####$Y_{1i}-Y_{0i}$ : 表示「沒被擋修個體」為第一次的個體PR值所帶來的效果。
 
 
 
 ## 1.2 效應結構
 接續上題，課堂上的treatment dummy即為這裡的**可修個體**dummy，請寫下對應課堂效應結構$Y_i=Y_{0i}+(Y_{1i}-Y_{0i})T_i$之對應寫法（以這裡的文字符號表示）。
 
-T_{i}:虛擬變數。T_{1}=1是可修個體下的虛擬變數值、T_{0}=0是不可修個體下的虛擬變數值
- Y = Y_{0i}+[Y_{1i}-Y_{0i}]T_{i}
+####$T_{i}$ : 虛擬變數。
+####$T_{1}=1$ : 是可修個體下的虛擬變數值
+####$T_{0}=0$ : 是不可修個體下的虛擬變數值
+####$Y = Y_{0i}+[Y_{1i}-Y_{0i}]T_{i}$
 
  
 ## 1.3 簡單迴歸模型
@@ -188,166 +190,162 @@ $$\hat{\beta}_1=\bar{y}_1-\bar{y}_0,$$
 
 提示：證明過程可以適時的使用以下特質：
 
-  * 
   $$\sum_i w_i=\sum_{i,x_i=1} w_i +\sum_{i,x_i=0} w_i$$
+   
+  $$\bar{x}=n_1/n$$
   
-  * $\bar{x}=n_1/n$, 其中$n=n_0+n_1$。
+  $$n=n_0+n_1$$。
 
-答案:
+####ANS:
 
-$$\sum_{i,x_i=1}^n x_i=n_1$$
-$n_0=n-n_1$
+$\displaystyle\sum_{i,x_i=1}^n x_i=n_1$
 
-$\bar{x}=\frac{\sum_{i,x_1=1}^n x_i}{n}=\frac{n_1}{n_1+n_0}$
-
-$$\begin{equation*}
+$\begin{equation*}
 \begin{split}
 \displaystyle\sum_{i,x_i=1}^n (x_i-\bar{x})^2
 &=\displaystyle\sum_{i,x_i=1}^n ((x_i)^2-2x_i\bar{x}+\bar{x}^2
-=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -2\bar{x}\displaystyle\sum_{i,x_i=1}^n x_i +n\bar{x}^2\\
+=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -2\bar{x}\displaystyle\sum_{i,x_i=1}^n x_i +n\bar{x}^2\\\\
 &=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -2n\bar{x}^2+n\bar{x}^2
-=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -n\bar{x}^2\\
+=\displaystyle\sum_{i,x_i=1}^n x_i ^2 -n\bar{x}^2\\\\
 &=n_1-(n_0+n_1)(\frac{n_1}{n_0+n_1})^2
-=n_1-\frac{n_1^2}{n_0+n_1}\\
-&=\frac{n_1^2-n_0 n_1}{n_0+n_1}-\frac{n_1^2}{n_0+n_1}\\
+=n_1-\frac{n_1^2}{n_0+n_1}\\\\
+&=\frac{n_1^2-n_0 n_1}{n_0+n_1}-\frac{n_1^2}{n_0+n_1}\\\\
 &=\frac{n_0 n_1}{n_0+n_1}
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
-######----------
-$$
-\begin{equation*}
+######--------------------------------------------------我是分隔線-------------------------------------------------
+$\begin{equation*}
 \begin{split}
 \hat{\beta_1}
-&=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}(x_i-\bar{x})}
+&=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
 =\frac{\displaystyle\sum_{i=1}^n x_iy_i-n\bar{y}}{\frac{n_0 n_1}{n_0 + n_1}} 
-=\frac{n_1(\bar{y_1}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1})}{\frac{n_0 n_1}{n_0+n_1}}\\   
-&=\bar{y_1}\frac{n_0+n_1}{n_0}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1}\frac{n_0+n_1}{n_0}\\
-&=\bar{y_1}+\bar{y_1}\frac{n_1}{n_0}-\bar{y_1}\frac{n_1}{n_0}-\bar{y_0}\\
+=\frac{n_1(\bar{y_1}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1})}{\frac{n_0 n_1}{n_0+n_1}}\\\\
+&=\bar{y_1}\frac{n_0+n_1}{n_0}-\frac{n_0\bar{y_0}+n_1\bar{y_1}}{n_0+n_1}\frac{n_0+n_1}{n_0}\\\\
+&=\bar{y_1}+\bar{y_1}\frac{n_1}{n_0}-\bar{y_1}\frac{n_1}{n_0}-\bar{y_0}\\\\
 &=\bar{y_1}-\bar{y_0}
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
 
 ## 2.2
 
 假設$E(\epsilon_i|x_i)=0$，證明上題設定下：
-
-$$\begin{equation*}
+\
+$\begin{equation*}
 \begin{split}
 \hat{\beta_1}
 &=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})(y_i-{\bar{y}})}{\displaystyle\sum_{i=1}(x_i-\bar{x})^2}
-=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}(x_i-\bar{x})}\\
-&=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})(\beta_0+\beta_1x_i+u_i)}{\displaystyle\sum_{i=1}(x_i-\bar{x})}\\
+=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})y_i}{\displaystyle\sum_{i=1}(x_i-\bar{x})}
+=\frac{\displaystyle\sum_{i=1}^n (x_i-\bar{x})(\beta_0+\beta_1x_i+\epsilon_i)}{\displaystyle\sum_{i=1}(x_i-\bar{x})}\\\\
 &=\frac{\displaystyle\beta_0}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\displaystyle\sum_{i=1}^nx_i-\bar{x}
 +\frac{\displaystyle\beta_1}{\displaystyle\sum_{i=1}(x_i-\bar{x})^2}\displaystyle\sum_{i=1}(x_i-\bar{x})
-+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
++\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})\epsilon_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\\\
 &=0+\frac{\displaystyle\beta_1}{\sum_{i=1}(x_i-\bar{x})^2}\displaystyle\sum_{i=1}(x_i-\bar{x})^2
-+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
-&=\beta_1+\frac{\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
++\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})\epsilon_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\\\
+&=\beta_1+\frac{\sum_{i=1}^n(x_i-\bar{x})\epsilon_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
-  (a) $E(\hat{\beta}_1)=\beta_1$
-  
-$$\begin{equation*}
+###(a) $E(\hat{\beta}_1)=\beta_1$
+####ANS:
+$\begin{equation*}
 \begin{split}
 E(\hat{\beta}_1)
-=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})E(u_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
-=\beta_1
+&=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})\epsilon_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})E(\epsilon_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\\\
+&=\beta_1
 \end{split}
-\end{equation*}$$
+\end{equation*}$
   
-  (b) 若條件在已知已知每個觀測值的$x_i$為1或0下$V(\epsilon_i|x_i)=\sigma^2$（即齊質變異），則條件變異數$V(\hat{\beta}_1|X)=\frac{n}{n_1 n_0}\sigma^2$。
-  
-$$\begin{equation*}
+###(b) 若條件在已知已知每個觀測值的$x_i$為1或0下$V(\epsilon_i|x_i)=\sigma^2$（即齊質變異），則條件變異數$V(\hat{\beta}_1|X)=\frac{n}{n_1 n_0}\sigma^2$。
+####ANS:  
+$\begin{equation*}
 \begin{split}
 Var(\hat{\beta}_1|X)
-&=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})u_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})Var(u_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\
+&=E(\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})\epsilon_i}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2})=\beta_1+\frac{\displaystyle\sum_{i=1}^n(x_i-\bar{x})Var(\epsilon_i)}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}\\\\
 &=\frac{\displaystyle\sigma^2}{\displaystyle\sum_{i=1}^n(x_i-\bar{x})^2}
-=\frac{\displaystyle\sigma^2}{\frac{n_0 n_1}{n_0+n_1}}\\
+=\frac{\displaystyle\sigma^2}{\frac{n_0 n_1}{n_0+n_1}}\\\\
 &=\frac{n}{n_0 n_1}\sigma^2
 \end{split}
-\end{equation*}$$
+\end{equation*}$
   
-  (c) 若考慮異質變異$V(\epsilon_i|x_i=0)=\sigma_0^2$、$V(\epsilon_i|x_i=1)=\sigma_1^2$，則條件變異數$V(\hat{\beta}_1|X)=\frac{\sigma_0^2}{n_0}+\frac{\sigma_1^2}{n_1}$。
-  
-$$\begin{equation*}
+###(c) 若考慮異質變異$V(\epsilon_i|x_i=0)=\sigma_0^2$、$V(\epsilon_i|x_i=1)=\sigma_1^2$，則條件變異數$V(\hat{\beta}_1|X)=\frac{\sigma_0^2}{n_0}+\frac{\sigma_1^2}{n_1}$。
+####ANS:  
+$\begin{equation*}
 \begin{split}
 V(\epsilon_i|x_i=0)
 &=\sigma_0^2\\
-&=E(\epsilon_i^2|x_i)-E(\epsilon_i|x_i)^2\\
-&=E(\epsilon_i^2|x_i)-0^2\\
-&=E(\epsilon_i^2|x_i)\\
+&=E(\epsilon_i^2|x_i)-E(\epsilon_i|x_i)^2\\\\
+&=E(\epsilon_i^2|x_i)-0^2\\\\
+&=E(\epsilon_i^2|x_i)\\\\
 &=\sigma_0^2
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
-所以
-$$\begin{equation*}
+####所以
+$\begin{equation*}
 \begin{split}
-E(\epsilon_i^2|x_i=0)=\sigma_0^2
+E(\epsilon_i^2|x_i=0)=\sigma_0^2, E(\epsilon_i^2|x_i=1)=\sigma_1^2
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
-$$\begin{equation*}
-\begin{split}
-E(\epsilon_i^2|x_i=1)=\sigma_1^2
-\end{split}
-\end{equation*}$$
+\
 
-$$\begin{equation*}
-\begin{split}
-V(\hat{\beta_1}|x_i=0)
-&=V(\bar{y_1}-\bar{y_0}|X)\\
-&=V(\bar{y_0}|X)+V(\bar{y_1}|X)\\
-&=\frac{V(y_1)}{n_o}+\frac{V(y_1)}{n_o}
-\end{split}
-\end{equation*}$$
-
-$$\begin{equation*}
+$\begin{equation*}
 \begin{split}
 V(Y_0)
-&=E(Y_0^2|X)-E(Y_0|X)^2\\
-&=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\
-&=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\
-&=\beta_0^2+\sigma_0^2-\beta_0^2\\
-&=\sigma_0^2
+&\quad=E(Y_0^2|X)-E(Y_0|X)^2
+=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\\\
+&\quad=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\\\
+&\quad=\beta_0^2+\sigma_0^2-\beta_0^2\\\\
+&\quad=\sigma_0^2  \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad(1)
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
+\
 
-$$\begin{equation*}
+$\begin{equation*}
 \begin{split}
 V(Y_1)
-&=E(Y_１^2|X)-E(Y_1|X)^2\\
-&=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\
-&=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\
-&=\beta_0^2+\sigma_１^2-\beta_0^2\\
-&=\sigma_1^2
+&\quad=E(Y_１^2|X)-E(Y_1|X)^2
+=E((\beta_0+\epsilon_i)^2|X)-E(\beta_0+\epsilon_i|X)^2\\\\
+&\quad=E(\beta_0^2+2\beta_0\epsilon_i+\epsilon_i^2|X)-\beta_0^2\\\\
+&\quad=\beta_0^2+\sigma_１^2-\beta_0^2\\\\
+&\quad=\sigma_1^2  \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad(2)
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
-$$\begin{equation*}
+\
+
+$\begin{equation*}
+\begin{split}
+V(\hat{\beta_1}|X)
+&=V(\bar{Y_1}-\bar{Y_0}|X)
+=V(\bar{Y_0}|X)+V(\bar{Y_1}|X)\\\\
+&=\frac{V(Y_0)}{n_o}+\frac{V(Y_1)}{n_1} \quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad\quad(3)  \quad\quad將(1)(2)帶入(3)
+\end{split}
+\end{equation*}$
+
+$\begin{equation*}
 \begin{split}
 V(\hat{\beta_1|X})=\frac{\sigma_0^2}{n_0}+\frac{\sigma_1^2}{n_1}
 \end{split}
-\end{equation*}$$
+\end{equation*}$
 
 ## 2.3 三明治表示式
 線性迴歸模型
 $Y=X\beta+\epsilon$
 的OLS估計式$\hat{\beta}=(X'X)^{-1}(X'Y)$。條件在已知$X$下，令$V(\epsilon|X)=\Sigma$。請證明$V(\hat{\beta}|X)=(X'X)^{-1}X'\Sigma X(X'X)^{-1}$，具有三明治形式（即可表示成$BMB'$的矩陣相乘形式）。
 
-
-
-$$\begin{aligned}
+####ANS:
+$\begin{aligned}
 \begin{split}
 Var(\hat{\beta})
-&=E\{[\hat{\beta}-E(\hat{\beta})][\hat{\beta}-E{\hat{\beta}}]'\}\\
-&=E\{(X'X)^{-1}X'uu'X(X'X)^{-1}\}\\
-&=(X'X)^{-1}X'E(uu')X(X'X)^{-1}\\
-&=(X'X)^{-1}X'\sigma^2 I_nX(X'X)^{-1}\\
+&=E\{[\hat{\beta}-E(\hat{\beta})][\hat{\beta}-E{\hat{\beta}}]'\}
+=E\{(X'X)^{-1}X'\epsilon\epsilon'X(X'X)^{-1}\}\\\\
+&=(X'X)^{-1}X'E(\epsilon\epsilon')X(X'X)^{-1}
+=(X'X)^{-1}X'\sigma^2 I_nX(X'X)^{-1}\\\\
+&=(X'X)^{-1}X'\sum{}X(X'X)^{-1}\\\\
 &=BMB'
 \end{split}
-\end{aligned}$$
+\end{aligned}$
